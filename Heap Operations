@@ -1,0 +1,49 @@
+from .heap_base import MaxHeap
+
+class HeapOperations(MaxHeap):
+    def _heapify_up(self, index):
+        """
+        Moves the element at the given index up to maintain the heap property.
+        """
+        parent_index = (index - 1) // 2
+        while index > 0 and self.heap[index] > self.heap[parent_index]:
+            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
+            index = parent_index
+            parent_index = (index - 1) // 2
+
+    def _heapify_down(self, index):
+        """
+        Moves the element at the given index down to maintain the heap property.
+        """
+        child_index = 2 * index + 1
+        while child_index < len(self.heap):
+            # Check if right child exists and is greater than left child
+            if child_index + 1 < len(self.heap) and self.heap[child_index + 1] > self.heap[child_index]:
+                child_index += 1
+            # Swap if the child is greater than the current node
+            if self.heap[index] < self.heap[child_index]:
+                self.heap[index], self.heap[child_index] = self.heap[child_index], self.heap[index]
+            else:
+                break
+            index = child_index
+            child_index = 2 * index + 1
+
+    def insert(self, value):
+        """
+        Inserts a new value into the heap.
+        """
+        self.heap.append(value)
+        self._heapify_up(len(self.heap) - 1)
+
+    def extract_max(self):
+        """
+        Removes and returns the maximum element from the heap.
+        """
+        if not self.heap:
+            return None
+        if len(self.heap) == 1:
+            return self.heap.pop()
+        max_value = self.heap[0]
+        self.heap[0] = self.heap.pop()  # Move the last element to the root
+        self._heapify_down(0)
+        return max_value
